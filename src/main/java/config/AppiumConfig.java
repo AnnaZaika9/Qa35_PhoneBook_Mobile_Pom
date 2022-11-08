@@ -26,8 +26,6 @@ public class AppiumConfig {
       //  capabilities.setCapability("app","C:/Users/user/Downloads/contacts-android.apk");
 
         driver=new AppiumDriver<AndroidElement>(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
-
-
     }
 
     @AfterSuite
