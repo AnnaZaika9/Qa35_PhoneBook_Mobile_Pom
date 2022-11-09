@@ -7,7 +7,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import screens.AuthenticationScreen;
 import screens.ContactListScreen;
-import screens.SplashScreen;
+
 
 public class LoginTests extends AppiumConfig {
 
