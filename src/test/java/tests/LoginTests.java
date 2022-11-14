@@ -33,11 +33,18 @@ public class LoginTests extends AppiumConfig {
         Assert.assertTrue(res);
 
     }
+    @Test
+    public void loginNegativeWrongEmail(){
+        new AuthenticationScreen(driver)
+                .loginUnsuccessful(Auth.builder().email("mashagmail.com").password("123589$Masha").build())
+                .isErorrMessageContaisText("Login or Password incorrect");
+        //   x@X
+    }
 
     @AfterMethod
     public void logoutFromSys(){
         new ContactListScreen(driver)
-                .logout();
+                .logout3();
     }
 
 }

@@ -12,19 +12,29 @@ public class BaseScreen {
 
     public BaseScreen(AppiumDriver<AndroidElement> driver) {
         this.driver = driver;
-        PageFactory.initElements(new AppiumFieldDecorator(driver),this);
+        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
-    public void type(AndroidElement element, String text){
-        if(text != null){
+
+
+    public void type(AndroidElement element, String text) {
+        if (text != null) {
             element.click();
             element.clear();
             element.sendKeys(text);
         }
-
-
     }
-    public void pause(int time){
+
+    public void type2(AndroidElement element, String text) {
+        if (text != null) {
+            element.click();
+            element.clear();
+            element.sendKeys(text);
+        }
+        driver.hideKeyboard();
+    }
+
+    public void pause(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
@@ -32,12 +42,22 @@ public class BaseScreen {
         }
     }
 
-    public void should(AndroidElement element, int time){
+    public void should(AndroidElement element, int time) {
         new WebDriverWait(driver, time).until(ExpectedConditions.visibilityOf(element));
     }
-    public boolean isShouldHave(AndroidElement element,String text, int time){
-       return new WebDriverWait(driver,time)
-                .until(ExpectedConditions.textToBePresentInElement(element,text));
 
+    public boolean isShouldHave(AndroidElement element, String text, int time) {
+        return new WebDriverWait(driver, time)
+                .until(ExpectedConditions.textToBePresentInElement(element, text));
+
+    }
+
+    public boolean isDisplayedWithExp(AndroidElement element) {
+        try {
+            should(element, 5);
+            return element.isDisplayed();
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }

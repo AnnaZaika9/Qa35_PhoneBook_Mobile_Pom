@@ -2,11 +2,11 @@ package screens;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidElement;
-import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+
+import java.util.List;
 
 
 public class ContactListScreen extends BaseScreen {
@@ -16,22 +16,78 @@ public class ContactListScreen extends BaseScreen {
 
     @FindBy(xpath = "//*[@resource-id='com.sheygam.contactapp:id/action_bar']/android.widget.TextView")
     AndroidElement activityViewText;
-
     @FindBy(xpath = "//*[@content-desc= 'More options']")
     AndroidElement moreOptions;
-
     @FindBy(id = "com.sheygam.contactapp:id/title")
     AndroidElement logoutButton;
-
-
     @FindBy(xpath = "//*[@content-desc='add']")
     // @FindBy(xpath = "//*[@resource-id ='com.sheygam.contactapp:id/add_contact_btn']")
     AndroidElement plusButton;
+    @FindBy(id = "com.sheygam.contactapp:id/rowName")
+    List<AndroidElement> contactNamesList;
+    @FindBy(id = "com.sheygam.contactapp:id/rowPhone")
+    List<AndroidElement> contactPhonesList;
+
+
+
+    public ContactListScreen isContactAddedByName(String name, String lastName) {
+        pause(5000);
+        checkContainsText(contactNamesList,name+" "+lastName);
+        return this;
+    }
+    public ContactListScreen isContactAddedByPhone(String phone){
+        checkContainsText(contactPhonesList,phone);
+        return this;
+    }
+
+    private void checkContainsText(List<AndroidElement> list, String text) {
+        boolean isPresent = false;
+        for (AndroidElement el : list) {
+
+            if (el.getText().contains(text)) {
+                isPresent = true;
+                break;
+            }
+        }
+        Assert.assertTrue(isPresent);
+    }
+    public AddNewContactScreen openContactForm(){
+        should(plusButton,5);
+        plusButton.click();
+        return new AddNewContactScreen(driver);
+    }
 
 
     public AuthenticationScreen logout() {
-        moreOptions.click();
-        logoutButton.click();
+        if(driver.findElements(By.xpath("//*[@content-desc='More options']")).size() > 0){
+            moreOptions.click();
+        logoutButton.click();}
+        return new AuthenticationScreen(driver);
+    }
+    public AuthenticationScreen logout2() {
+        // ,moreOptions.isEnabled(),moreOptions.isSelected()
+        if (moreOptions.isDisplayed()) {
+            moreOptions.click();
+            logoutButton.click();
+        }
+        return new AuthenticationScreen(driver);
+    }
+
+    public AuthenticationScreen logout3() {
+
+        if (isDisplayedWithExp(moreOptions)) {
+            moreOptions.click();
+            logoutButton.click();
+        }
+        return new AuthenticationScreen(driver);
+    }
+
+    public AuthenticationScreen logout4() {
+
+        if (activityViewText.getText().equals("Contact list")) {
+            moreOptions.click();
+            logoutButton.click();
+        }
         return new AuthenticationScreen(driver);
     }
 
@@ -44,9 +100,6 @@ public class ContactListScreen extends BaseScreen {
         should(plusButton, 10);
         return isShouldHave(activityViewText, "Contact list", 10);
     }
-
-
-
 
 
 }
