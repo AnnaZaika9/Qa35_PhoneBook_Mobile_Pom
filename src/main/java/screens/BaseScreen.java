@@ -26,6 +26,8 @@ public class BaseScreen {
     }
 
     public void type2(AndroidElement element, String text) {
+        element.click();
+        element.clear();
         if (text != null) {
             element.click();
             element.clear();
@@ -45,11 +47,14 @@ public class BaseScreen {
     public void should(AndroidElement element, int time) {
         new WebDriverWait(driver, time).until(ExpectedConditions.visibilityOf(element));
     }
+    public void shouldHave(AndroidElement element, String text, int time) {
+         new WebDriverWait(driver, time)
+                .until(ExpectedConditions.textToBePresentInElement(element, text));
+    }
 
     public boolean isShouldHave(AndroidElement element, String text, int time) {
         return new WebDriverWait(driver, time)
                 .until(ExpectedConditions.textToBePresentInElement(element, text));
-
     }
 
     public boolean isDisplayedWithExp(AndroidElement element) {

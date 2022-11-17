@@ -16,9 +16,7 @@ public class AddContactTest extends AppiumConfig {
     public void precondition(){
         new AuthenticationScreen(driver)
                 .login(Auth.builder().email("dasha@ukr.net").password("Ddasha$123456").build());
-
-
-    }
+   }
     @Test
     public void addNewContactSuccess(){
         int i = new Random().nextInt(1000)+1000;
@@ -26,7 +24,7 @@ public class AddContactTest extends AppiumConfig {
                 .name("Sima"+i)
                 .lastname("Wow"+i)
                 .email("sima"+i+"@mail.ru")
-                .phone("123456789123")
+                .phone("1234567"+i)
                 .address("Haifa")
                 .description("The best friend")
                 .build();
@@ -38,14 +36,14 @@ public class AddContactTest extends AppiumConfig {
                 .isContactAddedByPhone(contact.getPhone());
     }
 
-    @Test
+    @Test(invocationCount = 3)
     public void addNewContactSuccessRequiredFields(){
         int i = new Random().nextInt(1000)+1000;
         Contact contact = Contact.builder()
                 .name("Alon"+i)
                 .lastname("Snow"+i)
                 .email("alon"+i+"@mail.ru")
-                .phone("111226789123")
+                .phone("1234567"+i)
                 .address("Tel Aviv")
                 .build();
         new ContactListScreen(driver)
@@ -56,7 +54,7 @@ public class AddContactTest extends AppiumConfig {
                 .isContactAddedByPhone(contact.getPhone());
     }
     @Test
-    public void addNewContactNegativeWrongName(){
+    public void addNewContactNegativeEmptyName(){
 
         Contact contact = Contact.builder()
                 .lastname("Log")
@@ -85,7 +83,9 @@ public class AddContactTest extends AppiumConfig {
                 .openContactForm()
                 .fillContactForm(contact)
                 .submitContactFormNegative()
+               // .isErrorContainsText("Error")
                 .isErorrMessageContaisText("email=must be a well-formed email address");
+
 
     }
     @Test
@@ -103,6 +103,24 @@ public class AddContactTest extends AppiumConfig {
                 .fillContactForm(contact)
                 .submitContactFormNegative()
                 .isErorrMessageContaisText("phone=Phone number must contain only digits! And length min 10, max 15!");
+
+    }
+    @Test
+    public void addNewContactNegativeEmptyPhone(){
+
+        Contact contact = Contact.builder()
+                .name("Neg")
+                .lastname("Tive")
+                .email("neg@mail.ru")
+                .address("Kiev")
+                .build();
+        new ContactListScreen(driver)
+                .openContactForm()
+                .fillContactForm(contact)
+                .submitContactFormNegative()
+               // .isErrorContainsText("Phone number must contain only digits! And length min 10, max 15!")
+                .isErorrMessageContaisText("Phone number must contain only digits! And length min 10, max 15!");
+
     }
 
     @AfterClass
@@ -111,3 +129,6 @@ public class AddContactTest extends AppiumConfig {
                 .logout();
     }
 }
+
+
+
