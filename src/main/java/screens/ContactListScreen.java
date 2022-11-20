@@ -26,6 +26,8 @@ public class ContactListScreen extends BaseScreen {
     AndroidElement moreOptions;
     @FindBy(id = "com.sheygam.contactapp:id/title")
     AndroidElement logoutButton;
+    @FindBy(xpath = "//*[@text = 'Date picker']")
+    AndroidElement datePickerButton;
     @FindBy(xpath = "//*[@content-desc='add']")
     // @FindBy(xpath = "//*[@resource-id ='com.sheygam.contactapp:id/add_contact_btn']")
     AndroidElement plusButton;
@@ -35,6 +37,8 @@ public class ContactListScreen extends BaseScreen {
     List<AndroidElement> contactPhonesList;
     @FindBy(id = "com.sheygam.contactapp:id/rowContainer")
     List<AndroidElement> contacts;
+    @FindBy(id = "com.sheygam.contactapp:id/emailTxt")
+    AndroidElement emailInOpenContact;
 
     @FindBy (id="android:id/button1")
     AndroidElement yesButton;
@@ -44,6 +48,29 @@ public class ContactListScreen extends BaseScreen {
 
     @FindBy(id = "com.sheygam.contactapp:id/emptyTxt")
     AndroidElement messageNoContacts;
+    int countBefore;
+    int countAfter;
+    public DataPickerExampleScreen openDatePickerScreen(){
+        should(moreOptions,5);
+        moreOptions.click();
+        datePickerButton.click();
+        return new DataPickerExampleScreen(driver);
+    }
+    public EditContactScreen openEditForm(){
+        AndroidElement contact = contacts.get(0);
+        Rectangle rect = contact.getRect();
+        int xB = rect.getX() + rect.getWidth()/8;
+        int xA = rect.getX() + (rect.getWidth()/8)*7;
+        int y = rect.getY()+ rect.getHeight()/2;
+
+        TouchAction<?> touchAction = new TouchAction<>(driver);
+        touchAction.longPress(PointOption.point(xA,y))
+                .moveTo(PointOption.point(xB,y))
+                .release().perform();
+
+
+        return new EditContactScreen(driver);
+    }
 
     public ContactListScreen removeFirstContact() {
 
@@ -66,6 +93,8 @@ public class ContactListScreen extends BaseScreen {
 
     public ContactListScreen removeOneContact(){
        // shouldHave(activityViewText,"Contact list",5);
+        countBefore = contacts.size();
+        System.out.println(countBefore);
 
         AndroidElement contact = contacts.get(0);
         Dimension dimension = driver.manage().window().getSize();
@@ -87,6 +116,13 @@ public class ContactListScreen extends BaseScreen {
         yesButton.click();
 
         pause(7000);
+        countAfter = contacts.size();
+        System.out.println(countAfter);
+
+        return this;
+    }
+    public ContactListScreen isListSizeOneLess(){
+        Assert.assertEquals(countBefore-countAfter,1);
 
         return this;
     }
@@ -102,10 +138,36 @@ public class ContactListScreen extends BaseScreen {
     }
 
     public ContactListScreen isContactAddedByName(String name, String lastName) {
-        pause(5000);
+        //pause(5000);
         checkContainsText(contactNamesList,name+" "+lastName);
         return this;
     }
+    public ContactListScreen isContactAddedByNameOnly(String name) {
+       // pause(5000);
+        checkContainsText(contactNamesList,name);
+        return this;
+    }
+
+    public ContactListScreen isContactAddedByLastNameOnly(String lastName) {
+       // pause(5000);
+        checkContainsText(contactNamesList,lastName);
+        return this;
+    }
+    public boolean isContactAddedByEmail(String email){
+        List<AndroidElement> list = contacts;
+
+        for (AndroidElement el : list){
+            el.click();
+            pause(2000);
+            if(emailInOpenContact.equals(email)){
+                return true;
+           }
+                driver.navigate().back();
+        }
+        return false;
+    }
+
+
     public ContactListScreen isContactAddedByPhone(String phone){
         checkContainsText(contactPhonesList,phone);
         return this;
@@ -174,12 +236,17 @@ public class ContactListScreen extends BaseScreen {
         return isShouldHave(activityViewText, "Contact list", 10);
     }
 
+    public ContactListScreen isNoContactHere() {
+        Assert.assertTrue(isShouldHave(messageNoContacts, "No Contacts. Add One more!", 5));
+        return this;
+    }
 
-    public ContactListScreen isNoContactHere(String text) {
+
+    public ContactListScreen isNoContactHereHW(String text) {
         Assert.assertTrue(messageNoContacts.getText().equals(text));
         return this;
     }
-    public ContactListScreen providerOfContacts(){
+    public ContactListScreen providerOfContactsHW(){
         Random random = new Random();
         if(countOfContact() < 2) {
             for (int i = 0; i < 3; i++) {
@@ -198,6 +265,31 @@ public class ContactListScreen extends BaseScreen {
             }
         }
         return this;
+    }
+    public ContactListScreen providerContacts(){
+        if(contacts.size()<3){
+            for (int i = 0; i < 3; i++){
+                addContact();
+            }
+
+        }
+
+        return this;
+    }
+    public void addContact(){
+        int i = (int)(System.currentTimeMillis()/1000) %3600;
+        Contact contact = Contact.builder()
+                .name("Boris" + i)
+                .lastname("Fox" + i)
+                .email("boris" + i + "@mail.ru")
+                .phone("123456789" + i)
+                .address("Kiev")
+                .build();
+
+        new ContactListScreen(driver)
+                .openContactForm()
+                .fillContactForm(contact)
+                .submitContactForm();
 
     }
 }
