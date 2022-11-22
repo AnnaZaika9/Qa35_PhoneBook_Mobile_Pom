@@ -52,7 +52,7 @@ public class EditContactTests extends AppiumConfig {
                 .openEditForm()
                 .editFildContact("email",email)
                 .updateChanges()
-                .isContactAddedByEmail(email);
+                .isContactAddedByEmailHW(email);
     }
 
     @AfterClass

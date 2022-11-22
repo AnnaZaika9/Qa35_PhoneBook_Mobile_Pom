@@ -7,7 +7,6 @@ import org.openqa.selenium.support.FindBy;
 import org.testng.Assert;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -47,6 +46,7 @@ public class DataPickerExampleScreen extends BaseScreen{
         String currentData = dateTextView.getText(); //15/11/2022
 
         LocalDate dataTest = LocalDate.parse(data, DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH));
+       // LocalDate dataTest = LocalDate.parse(data, DateTimeFormatter.ofPattern("dd MMMM yyyy"));
         System.out.println(dataTest);
 
         LocalDate dataEl = LocalDate.parse(currentData, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -55,6 +55,7 @@ public class DataPickerExampleScreen extends BaseScreen{
         Assert.assertEquals(dataTest,dataEl);
         return this;
     }
+
 
 
 }

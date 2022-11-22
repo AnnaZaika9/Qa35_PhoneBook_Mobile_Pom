@@ -39,6 +39,8 @@ public class ContactListScreen extends BaseScreen {
     List<AndroidElement> contacts;
     @FindBy(id = "com.sheygam.contactapp:id/emailTxt")
     AndroidElement emailInOpenContact;
+    @FindBy (id="com.sheygam.contactapp:id/emailTxt")
+    AndroidElement emailTextView;
 
     @FindBy (id="android:id/button1")
     AndroidElement yesButton;
@@ -153,7 +155,7 @@ public class ContactListScreen extends BaseScreen {
         checkContainsText(contactNamesList,lastName);
         return this;
     }
-    public boolean isContactAddedByEmail(String email){
+    public boolean isContactAddedByEmailHW(String email){
         List<AndroidElement> list = contacts;
 
         for (AndroidElement el : list){
@@ -166,6 +168,23 @@ public class ContactListScreen extends BaseScreen {
         }
         return false;
     }
+    public ContactListScreen isContactAddedByEmail (String email){
+        boolean isPresent = false;
+        for (AndroidElement el:contacts) {
+            el.click();
+            if(emailTextView.getText().equals(email)){
+                isPresent = true;
+                driver.navigate().back();
+                pause(1000);
+                break;
+
+            }
+
+        }Assert.assertTrue(isPresent);
+
+        return this;
+    }
+
 
 
     public ContactListScreen isContactAddedByPhone(String phone){
